@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Train schedule app
 
-## Getting Started
+Pet project. A simple train schedule app with admin panel. 
 
-First, run the development server:
+---
+
+## 📌 Features
+
+- Built with Next.js (React framework)
+- TypeScript support
+- Modern styling (Tailwind CSS / CSS Modules)
+- ESLint and Prettier for code quality
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/viktor-kindrat/train-schedule-frontend.git
+cd train-schedule-frontend
+````
+
+### 2. Install dependencies
+
+Use pnpm package manager:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Set up environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a file named `.env.local` in the project root. Add any required variables:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```dotenv
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+API_URL=http://localhost:4000
+```
 
-## Learn More
+> Variables starting with `NEXT_PUBLIC_` are available in the browser.
 
-To learn more about Next.js, take a look at the following resources:
+### 4. Start the development server
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The app will be available at `http://localhost:3000`.
 
-## Deploy on Vercel
+### 5. Build and run for production
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm run build
+pnpm start
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🧞 Scripts
+
+| Script       | Description                          |
+| ------------ | ------------------------------------ |
+| `dev`        | Start development server             |
+| `build`      | Create an optimized production build |
+| `start`      | Start the app in production          |
+| `lint`       | Run ESLint to check code style       |
+| `format`     | Run Prettier to format code          |
+| `type-check` | Run TypeScript type checking         |
+| `test`       | Run tests (if configured)            |
+
+---
+
+## ✍️ Contributing
+
+1. Fork the repository
+2. Create a new branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m "Add new feature"`
+4. Push to the branch: `git push origin feature/your-feature`
+5. Open a pull request
+

@@ -1,0 +1,10 @@
+@import 'tailwindcss';
+@import './config.css';
+@import './typography.css';
+@import './custom.css';
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body), sans-serif;
+}
