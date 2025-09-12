@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Dashboard',
+    default: 'Train Schedule',
     template: '%s | Train Schedule',
   },
   description: 'A simple train schedule app with admin panel.',
