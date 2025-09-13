@@ -13,7 +13,7 @@ export default function FAQ() {
           <AccordionTab
             header="Як працює авторизація?"
             headerClassName="body-20-semibold"
-            contentClassName="body-16-regular text-[var(--text-color-secondary)]"
+            contentClassName="body-16-regular"
           >
             Ми використовуємо JWT: після логіну бекенд повертає токен, який зберігається в httpOnly cookie
             <code className="mx-1 px-1 rounded bg-[var(--surface-50)]">auth-token</code>.
@@ -23,7 +23,7 @@ export default function FAQ() {
           <AccordionTab
             header="Звідки беруться дані розкладу?"
             headerClassName="body-20-semibold"
-            contentClassName="body-16-regular text-[var(--text-color-secondary)]"
+            contentClassName="body-16-regular"
           >
             Дані зберігаються в PostgreSQL. CRUD-ендпоїнти бекенду (NestJS) дозволяють додавати,
             оновлювати, видаляти й читати рейси. Також є пагінація, сортування та пошук.
@@ -32,7 +32,7 @@ export default function FAQ() {
           <AccordionTab
             header="Чи можна редагувати рейси з інтерфейсу?"
             headerClassName="body-20-semibold"
-            contentClassName="body-16-regular text-[var(--text-color-secondary)]"
+            contentClassName="body-16-regular"
           >
             Так. У <code>/dashboard</code> доступні форми додавання/редагування, масові дії та фільтри
             за станцією відправлення/прибуття, датою, тривалістю тощо.
@@ -41,7 +41,7 @@ export default function FAQ() {
           <AccordionTab
             header="Які є фічі пошуку та сортування?"
             headerClassName="body-20-semibold"
-            contentClassName="body-16-regular text-[var(--text-color-secondary)]"
+            contentClassName="body-16-regular"
           >
             Пошук за номером поїзда, станціями і датою. Сортування за часом відправлення, прибуття,
             тривалістю та номером. Комбіновані фільтри підтримуються.
@@ -50,7 +50,7 @@ export default function FAQ() {
           <AccordionTab
             header="Чи є ролі користувачів?"
             headerClassName="body-20-semibold"
-            contentClassName="body-16-regular text-[var(--text-color-secondary)]"
+            contentClassName="body-16-regular"
           >
             Мінімально: <b>admin</b> (повний доступ) та <b>user</b> (перегляд).
             Ролі розширюються через Guards/Decorators у NestJS.
@@ -59,7 +59,7 @@ export default function FAQ() {
           <AccordionTab
             header="Де розгорнуто застосунок?"
             headerClassName="body-20-semibold"
-            contentClassName="body-16-regular text-[var(--text-color-secondary)]"
+            contentClassName="body-16-regular"
           >
             Бекенд — на хмарі (Render.com), фронтенд — Next.js.
             Підключений логер, health-check та базові метрики.
