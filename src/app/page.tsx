@@ -7,7 +7,7 @@ import Footer from '@/components/landing/Footer';
 
 export default async function LandingPage() {
   const token = (await cookies()).get('auth-token')?.value;
-  const ctaHref = token ? '/dashboard' : '/auth';
+  const ctaHref = token ? '/dashboard' : '/auth/login';
 
   return (
     <main className="flex min-h-dvh flex-col">

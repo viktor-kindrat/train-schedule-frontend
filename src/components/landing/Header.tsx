@@ -20,8 +20,9 @@ export default function Header({ ctaHref }: Props) {
 
         <Link href={ctaHref} className="ml-4">
           <Button
-            label="Відкрити додаток"
+            label="У додаток"
             icon="pi pi-arrow-right"
+            iconPos='right'
             className="bg-primary-600 body-16-semibold rounded-3xl border-none px-6 py-2"
           />
         </Link>
