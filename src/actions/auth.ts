@@ -2,9 +2,12 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { apiFetch, getAuthTokenFromSetCookie, getCookieOptions } from '@/lib/server/api';
-import type { LoginDto, RegisterDto, AuthResponse } from '@/types/common/auth';
+import { getAuthTokenFromSetCookie, getCookieOptions, getReadableCookieOptions } from '@/lib/server/api';
+import type { LoginDto, RegisterDto, AuthResponse } from '@/types/auth/auth';
 import { registerSchema, type RegisterSchema } from '@/libs/auth/schemas';
+import { HAS_AUTH_COOKIE } from '@/constants/auth';
+import { axiosPrivateServer } from '@/lib/server/http';
+import type { AxiosResponse } from 'axios';
 
 export type RegisterFormState = {
   fieldErrors?: Partial<Record<keyof RegisterSchema, string>>;
@@ -21,18 +24,16 @@ export async function loginAction(formData: FormData): Promise<void> {
 
   const payload: LoginDto = { email, password };
 
-  const res = await apiFetch('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
+  const res = await axiosPrivateServer.post('/auth/login', payload, { responseType: 'json' });
 
-  if (res.ok) {
-    const setCookie = res.headers.get('set-cookie');
-    const token = getAuthTokenFromSetCookie(setCookie);
+  if (res.status >= 200 && res.status < 300) {
+    const setCookie = res.headers['set-cookie'] as string | string[] | undefined;
+    const token = getAuthTokenFromSetCookie(setCookie ?? null);
+    const jar = await cookies();
     if (token) {
-      const jar = await cookies();
       jar.set('auth-token', token, getCookieOptions());
     }
+    jar.set(HAS_AUTH_COOKIE, '1', getReadableCookieOptions());
     redirect('/dashboard');
   }
 
@@ -40,7 +41,7 @@ export async function loginAction(formData: FormData): Promise<void> {
     redirect('/auth/login?error=' + encodeURIComponent('Невірні облікові дані'));
   }
 
-  const message = await safeMessage(res);
+  const message = safeAxiosMessage(res);
   redirect('/auth/login?error=' + encodeURIComponent(message));
 }
 
@@ -56,32 +57,30 @@ export async function registerAction(formData: FormData): Promise<void> {
 
   const payload: RegisterDto = { lastName, firstName, email, password };
 
-  const res = await apiFetch('/auth/sign-up', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
+  const res = await axiosPrivateServer.post('/auth/sign-up', payload, { responseType: 'json' });
 
-  if (res.ok) {
-    const setCookie = res.headers.get('set-cookie');
-    const token = getAuthTokenFromSetCookie(setCookie);
+  if (res.status >= 200 && res.status < 300) {
+    const setCookie = res.headers['set-cookie'] as string | string[] | undefined;
+    const token = getAuthTokenFromSetCookie(setCookie ?? null);
+    const jar = await cookies();
     if (token) {
-      const jar = await cookies();
       jar.set('auth-token', token, getCookieOptions());
     } else {
       await loginAfterRegister(email, password);
     }
+    jar.set(HAS_AUTH_COOKIE, '1', getReadableCookieOptions());
     redirect('/dashboard');
   }
 
   if (res.status === 400) {
-    const text = await res.text();
-    redirect('/auth/register?error=' + encodeURIComponent(text || 'Помилка валідації'));
+    const msg = safeAxiosMessage(res);
+    redirect('/auth/register?error=' + encodeURIComponent(msg || 'Помилка валідації'));
   }
   if (res.status === 409) {
     redirect('/auth/register?error=' + encodeURIComponent(`Email вже використовується: ${email}`));
   }
 
-  const message = await safeMessage(res);
+  const message = safeAxiosMessage(res);
   redirect('/auth/register?error=' + encodeURIComponent(message));
 }
 
@@ -109,20 +108,18 @@ export async function registerValidateAction(
   }
 
   const payload: RegisterDto = parsed.data;
-  const res = await apiFetch('/auth/sign-up', {
-    method: 'POST',
-    body: JSON.stringify(payload),
-  });
+  const res = await axiosPrivateServer.post('/auth/sign-up', payload, { responseType: 'json' });
 
-  if (res.ok) {
-    const setCookie = res.headers.get('set-cookie');
-    const token = getAuthTokenFromSetCookie(setCookie);
+  if (res.status >= 200 && res.status < 300) {
+    const setCookie = res.headers['set-cookie'] as string | string[] | undefined;
+    const token = getAuthTokenFromSetCookie(setCookie ?? null);
+    const jar = await cookies();
     if (token) {
-      const jar = await cookies();
       jar.set('auth-token', token, getCookieOptions());
     } else {
       await loginAfterRegister(payload.email, payload.password);
     }
+    jar.set(HAS_AUTH_COOKIE, '1', getReadableCookieOptions());
     redirect('/dashboard');
   }
 
@@ -131,38 +128,37 @@ export async function registerValidateAction(
   }
 
   if (res.status === 400) {
-    const text = await res.text();
-    return { formError: text || 'Помилка валідації' };
+    const msg = safeAxiosMessage(res);
+    return { formError: msg || 'Помилка валідації' };
   }
 
-  const message = await safeMessage(res);
+  const message = safeAxiosMessage(res);
   return { formError: message };
 }
 
 export async function logoutAction() {
-  await apiFetch('/auth/logout', { method: 'POST' });
+  await axiosPrivateServer.post('/auth/logout', undefined, { responseType: 'json' });
   const jar = await cookies();
   jar.delete('auth-token');
+  jar.delete(HAS_AUTH_COOKIE);
   redirect('/');
 }
 
 export async function getCurrentUser(): Promise<AuthResponse['user'] | null> {
-  const res = await apiFetch('/auth/profile', { method: 'GET' });
-  if (res.ok) {
-    const data = (await res.json()) as AuthResponse['user'];
+  const res = await axiosPrivateServer.get('/auth/profile', { responseType: 'json' });
+  console.log(res);
+  if (res.status >= 200 && res.status < 300) {
+    const data = res.data as AuthResponse['user'];
     return data;
   }
   return null;
 }
 
 async function loginAfterRegister(email: string, password: string) {
-  const res = await apiFetch('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ email, password }),
-  });
-  if (res.ok) {
-    const setCookie = res.headers.get('set-cookie');
-    const token = getAuthTokenFromSetCookie(setCookie);
+  const res = await axiosPrivateServer.post('/auth/login', { email, password }, { responseType: 'json' });
+  if (res.status >= 200 && res.status < 300) {
+    const setCookie = res.headers['set-cookie'] as string | string[] | undefined;
+    const token = getAuthTokenFromSetCookie(setCookie ?? null);
     if (token) {
       const jar = await cookies();
       jar.set('auth-token', token, getCookieOptions());
@@ -170,16 +166,11 @@ async function loginAfterRegister(email: string, password: string) {
   }
 }
 
-async function safeMessage(res: Response) {
-  try {
-    const data = (await res.json()) as { message?: string };
-    return data?.message || `${res.status} ${res.statusText}`;
-  } catch {
-    try {
-      const text = await res.text();
-      return text || `${res.status} ${res.statusText}`;
-    } catch {
-      return `${res.status} ${res.statusText}`;
-    }
+function safeAxiosMessage(res: AxiosResponse): string {
+  const data = res.data as unknown;
+  if (data && typeof data === 'object' && 'message' in (data as any)) {
+    return String((data as any).message);
   }
+  if (typeof data === 'string') return data;
+  return `${res.status} ${res.statusText}`;
 }

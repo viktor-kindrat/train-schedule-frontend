@@ -2,11 +2,12 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { getCurrentUser, logoutAction } from '@/actions/auth';
 
-export const dynamic = 'force-dynamic';
-
 export default async function DashboardPage() {
-  const token = (await cookies()).get('auth-token')?.value;
+  const cookieObject = await cookies();
+  const token = cookieObject.get('auth-token')?.value;
   if (!token) redirect('/auth/login');
+
+  console.log(token);
 
   const user = await getCurrentUser();
   if (!user) redirect('/auth/login');

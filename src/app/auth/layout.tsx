@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import type { ReadonlyChildren } from '@/types/common/ui/i-readonly-children';
 
 export default function AuthLayout({ children }: ReadonlyChildren) {
