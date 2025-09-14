@@ -21,11 +21,7 @@ export default function Input({ label, error, id, className, type, ...rest }: In
       <InputText
         id={id}
         type={type}
-        className={
-          'w-full ' +
-          (invalid ? 'p-invalid' : '') +
-          (className ? ' ' + className : '')
-        }
+        className={'w-full ' + (invalid ? 'p-invalid' : '') + (className ? ' ' + className : '')}
         aria-invalid={invalid}
         {...rest}
       />

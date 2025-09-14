@@ -18,7 +18,9 @@ export function getReadableCookieOptions() {
   };
 }
 
-export function getAuthTokenFromSetCookie(setCookieHeader: string | string[] | null): string | null {
+export function getAuthTokenFromSetCookie(
+  setCookieHeader: string | string[] | null
+): string | null {
   if (!setCookieHeader) return null;
   const lines = Array.isArray(setCookieHeader) ? setCookieHeader : [setCookieHeader];
   for (const line of lines) {

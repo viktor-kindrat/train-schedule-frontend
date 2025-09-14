@@ -21,3 +21,5 @@ export const LOGIN_FIELD_ORDER: readonly LoginField[] = [
   LoginField.Email,
   LoginField.Password,
 ] as const;
+
+export const HAS_AUTH_COOKIE = 'has-auth';

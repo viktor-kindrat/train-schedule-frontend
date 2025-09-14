@@ -3,9 +3,20 @@
 import { useFormStatus } from 'react-dom';
 import { Button } from 'primereact/button';
 
+function isStringNode(value: React.ReactNode): value is string {
+  return Object.prototype.toString.call(value) === '[object String]';
+}
+
 export default function SubmitButton({ children }: { children: React.ReactNode }) {
   const { pending } = useFormStatus();
-  const label = typeof children === 'string' ? (pending ? 'Зачекайте…' : children) : pending ? 'Зачекайте…' : 'Надіслати';
+  let label: string;
+  if (pending) {
+    label = 'Зачекайте…';
+  } else if (isStringNode(children)) {
+    label = children;
+  } else {
+    label = 'Надіслати';
+  }
   return (
     <Button
       type="submit"

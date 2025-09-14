@@ -2,12 +2,16 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { getAuthTokenFromSetCookie, getCookieOptions, getReadableCookieOptions } from '@/lib/server/api';
+import {
+  getAuthTokenFromSetCookie,
+  getCookieOptions,
+  getReadableCookieOptions,
+} from '@/lib/common/server/api';
 import type { LoginDto, RegisterDto, AuthResponse } from '@/types/auth/auth';
-import { registerSchema, type RegisterSchema } from '@/libs/auth/schemas';
-import { HAS_AUTH_COOKIE } from '@/constants/auth';
-import { axiosPrivateServer } from '@/lib/server/http';
+import { registerSchema, type RegisterSchema } from '@/lib/auth/schemas';
+import { axiosPrivateServer } from '@/lib/common/server/http';
 import type { AxiosResponse } from 'axios';
+import { HAS_AUTH_COOKIE } from '@/constants/auth/constants';
 
 export type RegisterFormState = {
   fieldErrors?: Partial<Record<keyof RegisterSchema, string>>;
@@ -86,7 +90,7 @@ export async function registerAction(formData: FormData): Promise<void> {
 
 export async function registerValidateAction(
   prevState: RegisterFormState,
-  formData: FormData,
+  formData: FormData
 ): Promise<RegisterFormState> {
   const raw = {
     lastName: String(formData.get('lastName') || '').trim(),
@@ -97,7 +101,7 @@ export async function registerValidateAction(
 
   const parsed = registerSchema.safeParse(raw);
   if (!parsed.success) {
-    const flat = parsed.error.flatten((issue) => issue.message);
+    const flat = parsed.error.flatten(issue => issue.message);
     const fieldErrors: Partial<Record<keyof RegisterSchema, string>> = {
       lastName: flat.fieldErrors.lastName?.[0],
       firstName: flat.fieldErrors.firstName?.[0],
@@ -146,7 +150,6 @@ export async function logoutAction() {
 
 export async function getCurrentUser(): Promise<AuthResponse['user'] | null> {
   const res = await axiosPrivateServer.get('/auth/profile', { responseType: 'json' });
-  console.log(res);
   if (res.status >= 200 && res.status < 300) {
     const data = res.data as AuthResponse['user'];
     return data;
@@ -155,7 +158,11 @@ export async function getCurrentUser(): Promise<AuthResponse['user'] | null> {
 }
 
 async function loginAfterRegister(email: string, password: string) {
-  const res = await axiosPrivateServer.post('/auth/login', { email, password }, { responseType: 'json' });
+  const res = await axiosPrivateServer.post(
+    '/auth/login',
+    { email, password },
+    { responseType: 'json' }
+  );
   if (res.status >= 200 && res.status < 300) {
     const setCookie = res.headers['set-cookie'] as string | string[] | undefined;
     const token = getAuthTokenFromSetCookie(setCookie ?? null);
@@ -166,10 +173,16 @@ async function loginAfterRegister(email: string, password: string) {
   }
 }
 
+function hasMessage(value: unknown): value is { message: unknown } {
+  return (
+    typeof value === 'object' && value !== null && 'message' in (value as Record<string, unknown>)
+  );
+}
+
 function safeAxiosMessage(res: AxiosResponse): string {
-  const data = res.data as unknown;
-  if (data && typeof data === 'object' && 'message' in (data as any)) {
-    return String((data as any).message);
+  const data: unknown = res.data;
+  if (hasMessage(data)) {
+    return String(data.message);
   }
   if (typeof data === 'string') return data;
   return `${res.status} ${res.statusText}`;
