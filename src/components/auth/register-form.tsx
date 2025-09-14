@@ -59,7 +59,7 @@ export default function RegisterForm() {
       email: flat.fieldErrors.email?.[0],
       password: flat.fieldErrors.password?.[0],
     });
-    const fieldErrors: Record<string, string[] | undefined> = flat.fieldErrors;
+    const fieldErrors = flat.fieldErrors as Record<string, string[] | undefined>;
     const firstInvalidField = REGISTER_FIELD_ORDER.find(field => fieldErrors[field]?.[0]);
     if (firstInvalidField) {
       const inputElement = form.querySelector<HTMLInputElement>(`#${firstInvalidField}`);
