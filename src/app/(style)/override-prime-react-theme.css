@@ -121,20 +121,31 @@ a:hover {
   color: var(--link-hover-color);
 }
 
-.p-button:not(.p-button-text):not(.p-button-outlined) {
-  background: var(--color-primary-600);
-  border-color: var(--color-primary-600);
-  color: var(--color-neutral-100);
+/* solid primary (без text/outlined і БЕЗ severity-класів) */
+.p-button:not(.p-button-text):not(.p-button-outlined)
+:not(.p-button-secondary):not(.p-button-success):not(.p-button-info)
+:not(.p-button-warning):not(.p-button-help):not(.p-button-danger) {
+    background: var(--color-primary-600);
+    border-color: var(--color-primary-600);
+    color: var(--color-neutral-100);
 }
-.p-button:not(.p-button-text):not(.p-button-outlined):enabled:hover {
-  background: var(--color-primary-700);
-  border-color: var(--color-primary-700);
-  color: var(--color-neutral-100);
+
+.p-button:not(.p-button-text):not(.p-button-outlined)
+:not(.p-button-secondary):not(.p-button-success):not(.p-button-info)
+:not(.p-button-warning):not(.p-button-help):not(.p-button-danger):enabled:hover {
+    background: var(--color-primary-700);
+    border-color: var(--color-primary-700);
+    color: var(--color-neutral-100);
 }
-.p-button:not(.p-button-text):not(.p-button-outlined):enabled:active {
-  background: var(--color-primary-800);
-  border-color: var(--color-primary-800);
+
+.p-button:not(.p-button-text):not(.p-button-outlined)
+:not(.p-button-secondary):not(.p-button-success):not(.p-button-info)
+:not(.p-button-warning):not(.p-button-help):not(.p-button-danger):enabled:active {
+    background: var(--color-primary-800);
+    border-color: var(--color-primary-800);
+    color: var(--color-neutral-100);
 }
+
 
 .p-button.p-button-outlined {
   background: transparent;
