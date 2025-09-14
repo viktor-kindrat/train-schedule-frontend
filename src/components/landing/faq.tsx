@@ -1,4 +1,3 @@
-// components/FAQ.tsx
 'use client';
 
 import { Accordion, AccordionTab } from 'primereact/accordion';

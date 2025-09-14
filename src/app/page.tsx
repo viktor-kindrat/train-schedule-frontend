@@ -1,12 +1,13 @@
 import { cookies } from 'next/headers';
-import Header from '@/components/landing/Header';
-import Hero from '@/components/landing/Hero';
-import Features from '@/components/landing/Features';
-import FAQ from '@/components/landing/FAQ';
-import Footer from '@/components/landing/Footer';
+import Header from '@/components/landing/header';
+import Hero from '@/components/landing/hero';
+import Features from '@/components/landing/features';
+import FAQ from '@/components/landing/faq';
+import Footer from '@/components/landing/footer';
 
 export default async function LandingPage() {
-  const token = (await cookies()).get('auth-token')?.value;
+  const jar = await cookies();
+  const token = jar.get('auth-token')?.value;
   const ctaHref = token ? '/dashboard' : '/auth/login';
 
   return (

@@ -22,7 +22,7 @@ export default function Header({ ctaHref }: Props) {
           <Button
             label="У додаток"
             icon="pi pi-arrow-right"
-            iconPos='right'
+            iconPos="right"
             className="bg-primary-600 body-16-semibold rounded-3xl border-none px-6 py-2"
           />
         </Link>

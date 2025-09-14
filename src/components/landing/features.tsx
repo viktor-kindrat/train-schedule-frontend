@@ -24,7 +24,10 @@ export default function Features() {
         {items.map(it => (
           <Card key={it.title}>
             <div className="flex flex-col items-center justify-center gap-3">
-              <i className={`${it.icon} text-primary-600 self-center mb-5`} style={{ fontSize: '2.8rem' }} />
+              <i
+                className={`${it.icon} text-primary-600 mb-5 self-center`}
+                style={{ fontSize: '2.8rem' }}
+              />
               <div>
                 <h3 className="headline-3 text-center">{it.title}</h3>
                 <p className="body-16-regular mt-1 text-center text-neutral-600">{it.text}</p>
