@@ -1,4 +1,4 @@
-import axios, { AxiosHeaders, type AxiosRequestHeaders } from 'axios';
+import axios, { AxiosHeaders } from 'axios';
 import { cookies } from 'next/headers';
 import { API_BASE } from '@/constants/common/api';
 
@@ -31,25 +31,13 @@ export const axiosPrivateServerFormData = axios.create({
   headers: { 'Content-Type': 'multipart/form-data' },
 });
 
-function appendAuthCookie(
-  headers: AxiosRequestHeaders | AxiosHeaders | undefined,
-  cookieValue: string
-): AxiosRequestHeaders | AxiosHeaders {
+function appendAuthCookie(headers: AxiosHeaders | undefined, cookieValue: string): AxiosHeaders {
   const cookieStr = `auth-token=${encodeURIComponent(cookieValue)}`;
-  if (headers instanceof AxiosHeaders) {
-    const prev = headers.get('Cookie') ?? headers.get('cookie') ?? undefined;
-    headers.set('Cookie', prev ? `${prev}; ${cookieStr}` : cookieStr);
-    return headers;
-  }
-  const result: Record<string, string> = {};
-  if (headers) {
-    for (const [key, val] of Object.entries(headers)) {
-      result[key] = String(val);
-    }
-  }
-  const prev = result.Cookie ?? result.cookie;
-  result.Cookie = prev ? `${prev}; ${cookieStr}` : cookieStr;
-  return result as unknown as AxiosRequestHeaders;
+  const ax = headers ?? new AxiosHeaders();
+  const prevVal = ax.get('Cookie') ?? ax.get('cookie');
+  const prev = prevVal == null ? undefined : String(prevVal);
+  ax.set('Cookie', prev ? `${prev}; ${cookieStr}` : cookieStr);
+  return ax;
 }
 
 axiosPrivateServer.interceptors.request.use(async config => {

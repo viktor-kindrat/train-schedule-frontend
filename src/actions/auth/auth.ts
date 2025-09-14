@@ -11,12 +11,23 @@ import type { LoginDto, RegisterDto, AuthResponse } from '@/types/auth/auth';
 import { registerSchema, type RegisterSchema } from '@/lib/auth/schemas';
 import { axiosPrivateServer } from '@/lib/common/server/http';
 import type { AxiosResponse } from 'axios';
+import { AxiosHeaders } from 'axios';
 import { HAS_AUTH_COOKIE } from '@/constants/auth/constants';
 
 export type RegisterFormState = {
   fieldErrors?: Partial<Record<keyof RegisterSchema, string>>;
   formError?: string;
 };
+
+function readSetCookieHeader(res: AxiosResponse): string | string[] | undefined {
+  const headers = res.headers;
+  if (headers instanceof AxiosHeaders) {
+    const raw = headers.get('set-cookie');
+    if (raw === null) return undefined;
+    return Array.isArray(raw) ? raw : String(raw);
+  }
+  return undefined;
+}
 
 export async function loginAction(formData: FormData): Promise<void> {
   const email = String(formData.get('email') || '').trim();
@@ -31,7 +42,7 @@ export async function loginAction(formData: FormData): Promise<void> {
   const res = await axiosPrivateServer.post('/auth/login', payload, { responseType: 'json' });
 
   if (res.status >= 200 && res.status < 300) {
-    const setCookie = res.headers['set-cookie'] as string | string[] | undefined;
+    const setCookie = readSetCookieHeader(res);
     const token = getAuthTokenFromSetCookie(setCookie ?? null);
     const jar = await cookies();
     if (token) {
@@ -64,7 +75,7 @@ export async function registerAction(formData: FormData): Promise<void> {
   const res = await axiosPrivateServer.post('/auth/sign-up', payload, { responseType: 'json' });
 
   if (res.status >= 200 && res.status < 300) {
-    const setCookie = res.headers['set-cookie'] as string | string[] | undefined;
+    const setCookie = readSetCookieHeader(res);
     const token = getAuthTokenFromSetCookie(setCookie ?? null);
     const jar = await cookies();
     if (token) {
@@ -115,7 +126,7 @@ export async function registerValidateAction(
   const res = await axiosPrivateServer.post('/auth/sign-up', payload, { responseType: 'json' });
 
   if (res.status >= 200 && res.status < 300) {
-    const setCookie = res.headers['set-cookie'] as string | string[] | undefined;
+    const setCookie = readSetCookieHeader(res);
     const token = getAuthTokenFromSetCookie(setCookie ?? null);
     const jar = await cookies();
     if (token) {
@@ -149,10 +160,11 @@ export async function logoutAction() {
 }
 
 export async function getCurrentUser(): Promise<AuthResponse['user'] | null> {
-  const res = await axiosPrivateServer.get('/auth/profile', { responseType: 'json' });
+  const res = await axiosPrivateServer.get<AuthResponse['user']>('/auth/profile', {
+    responseType: 'json',
+  });
   if (res.status >= 200 && res.status < 300) {
-    const data = res.data as AuthResponse['user'];
-    return data;
+    return res.data;
   }
   return null;
 }
@@ -164,7 +176,7 @@ async function loginAfterRegister(email: string, password: string) {
     { responseType: 'json' }
   );
   if (res.status >= 200 && res.status < 300) {
-    const setCookie = res.headers['set-cookie'] as string | string[] | undefined;
+    const setCookie = readSetCookieHeader(res);
     const token = getAuthTokenFromSetCookie(setCookie ?? null);
     if (token) {
       const jar = await cookies();
@@ -174,9 +186,10 @@ async function loginAfterRegister(email: string, password: string) {
 }
 
 function hasMessage(value: unknown): value is { message: unknown } {
-  return (
-    typeof value === 'object' && value !== null && 'message' in (value as Record<string, unknown>)
-  );
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+  return 'message' in value;
 }
 
 function safeAxiosMessage(res: AxiosResponse): string {
