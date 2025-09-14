@@ -10,16 +10,13 @@ export const REGISTER_FIELD_ORDER: readonly RegisterField[] = [
   RegisterField.FirstName,
   RegisterField.Email,
   RegisterField.Password,
-] as const;
+];
 
 export enum LoginField {
   Email = 'email',
   Password = 'password',
 }
 
-export const LOGIN_FIELD_ORDER: readonly LoginField[] = [
-  LoginField.Email,
-  LoginField.Password,
-] as const;
+export const LOGIN_FIELD_ORDER: readonly LoginField[] = [LoginField.Email, LoginField.Password];
 
 export const HAS_AUTH_COOKIE = 'has-auth';
