@@ -72,7 +72,7 @@ export default function TripsFiltersBar({ stations }: Props) {
   }
 
   return (
-    <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm md:flex-row md:items-end md:gap-4">
+    <div className="mb-4 flex flex-col gap-3 rounded-2xl border border-neutral-200 bg-neutral-100 p-4 shadow-sm lg:flex-row lg:items-end lg:gap-4">
       <div className="flex flex-1 flex-col gap-2">
         <label className="body-16-semibold" htmlFor="trainNo">
           Номер поїзда
