@@ -9,18 +9,18 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: './(overview)/favicon-light.svg',
+        url: '/meta/favicon-light.svg',
         media: '(prefers-color-scheme: light)',
         type: 'image/svg+xml',
       },
       {
-        url: './(overview)/favicon-dark.svg',
+        url: '/meta/favicon-dark.svg',
         media: '(prefers-color-scheme: dark)',
         type: 'image/svg+xml',
       },
     ],
-    shortcut: './(meta)/favicon.ico',
-    apple: './(meta)/apple-touch-icon.png',
-    other: [{ rel: 'mask-icon', url: './(overview)/safari-pinned-tab.svg', color: '#000000' }],
+    shortcut: '/meta/favicon.ico',
+    apple: '/meta/apple-touch-icon.png',
+    other: [{ rel: 'mask-icon', url: '/meta/safari-pinned-tab.svg', color: '#000000' }],
   },
 };
