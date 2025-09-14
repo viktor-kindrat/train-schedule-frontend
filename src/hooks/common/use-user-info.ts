@@ -1,33 +1,45 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import type { AuthResponse } from "@/types/auth/auth";
-import { API_BASE } from "@/constants/common/api";
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { AuthResponse } from '@/types/auth/auth';
+import { API_BASE } from '@/constants/common/api';
 
-import type { UseUserInfo, UseUserInfoOptions } from "@/types/common/use-user-info";
-export type { UseUserInfo, UseUserInfoOptions } from "@/types/common/use-user-info";
+import type { UseUserInfo, UseUserInfoOptions } from '@/types/common/use-user-info';
+export type { UseUserInfo, UseUserInfoOptions } from '@/types/common/use-user-info';
 
-import { DASHBOARD_USER_INFO_STORAGE_KEY } from "@/constants/common/use-user-info";
+import { DASHBOARD_USER_INFO_STORAGE_KEY } from '@/constants/common/use-user-info';
 
-function readFromLocalStorage(key: string): AuthResponse["user"] | null {
+function isSafeUser(value: unknown): value is AuthResponse['user'] {
+  if (typeof value !== 'object' || value === null) return false;
+  return (
+    'id' in value &&
+    'lastName' in value &&
+    'firstName' in value &&
+    'email' in value &&
+    'role' in value &&
+    'createdAt' in value
+  );
+}
+
+function readFromLocalStorage(key: string): AuthResponse['user'] | null {
   try {
-    const raw = window.localStorage.getItem(key);
+    const raw = globalThis.localStorage.getItem(key);
     if (!raw) return null;
-    const parsed = JSON.parse(raw) as unknown;
-    return parsed as AuthResponse["user"];
-  } catch (_e) {
+    const parsed = JSON.parse(raw);
+    return isSafeUser(parsed) ? parsed : null;
+  } catch {
     return null;
   }
 }
 
-function writeToLocalStorage(key: string, value: AuthResponse["user"] | null): void {
+function writeToLocalStorage(key: string, value: AuthResponse['user'] | null): void {
   try {
     if (!value) {
-      window.localStorage.removeItem(key);
+      globalThis.localStorage.removeItem(key);
       return;
     }
     const serialized = JSON.stringify(value);
-    window.localStorage.setItem(key, serialized);
+    globalThis.localStorage.setItem(key, serialized);
   } catch {
     // ignore errors in production
   }
@@ -37,7 +49,7 @@ export function useUserInfo(options?: UseUserInfoOptions): UseUserInfo {
   const storageKey = options?.storageKey || DASHBOARD_USER_INFO_STORAGE_KEY;
   const initializedRef = useRef<boolean>(false);
 
-  const [user, setUser] = useState<AuthResponse["user"] | null>(null);
+  const [user, setUser] = useState<AuthResponse['user'] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,7 +63,7 @@ export function useUserInfo(options?: UseUserInfoOptions): UseUserInfo {
   }, [storageKey]);
 
   const setUserInfo = useCallback(
-    (value: AuthResponse["user"] | null) => {
+    (value: AuthResponse['user'] | null) => {
       setUser(value);
       writeToLocalStorage(storageKey, value);
     },
@@ -67,27 +79,28 @@ export function useUserInfo(options?: UseUserInfoOptions): UseUserInfo {
     setLoading(true);
     setError(null);
     try {
-      const base = API_BASE && API_BASE.startsWith("http") ? API_BASE : "";
+      const base = API_BASE && API_BASE.startsWith('http') ? API_BASE : '';
       if (!base) {
         setLoading(false);
         return;
       }
-      const response = await fetch(base + "/auth/profile", {
-        method: "GET",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch(base + '/auth/profile', {
+        method: 'GET',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
       });
       if (response.ok) {
-        const data = (await response.json()) as AuthResponse["user"];
-        setUser(data);
-        writeToLocalStorage(storageKey, data);
+        const data = await response.json();
+        const userData = isSafeUser(data) ? data : null;
+        setUser(userData);
+        writeToLocalStorage(storageKey, userData);
         setLoading(false);
         return;
       }
-      setError(String(response.status) + " " + response.statusText);
+      setError(String(response.status) + ' ' + response.statusText);
       setLoading(false);
-    } catch (errorInstance) {
-      setError(errorInstance instanceof Error ? errorInstance.message : "Помилка оновлення користувача");
+    } catch (error_) {
+      setError(error_ instanceof Error ? error_.message : 'Помилка оновлення користувача');
       setLoading(false);
     }
   }, [storageKey]);

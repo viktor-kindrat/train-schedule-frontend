@@ -18,7 +18,7 @@ export default function Header() {
             onClick={open}
             className="mr-3"
             aria-label="Відкрити меню"
-            severity='info'
+            severity="info"
             text
           />
           <Link href="/dashboard" className="headline-3">

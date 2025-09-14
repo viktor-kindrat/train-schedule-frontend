@@ -20,16 +20,11 @@ export default function AppSidebar({ items }: Props) {
 
   return (
     <Sidebar visible={visible} onHide={close} position="left">
-      <div className="mb-5 body-20-semibold text-center w-full">Оберіть із меню</div>
+      <div className="body-20-semibold mb-5 w-full text-center">Оберіть із меню</div>
       <nav className="flex flex-col gap-3">
         {items.map(item => (
           <Link key={item.href} href={item.href} onClick={close}>
-            <Button
-              label={item.title}
-              icon={item.icon}
-              className="body-16-semibold w-full"
-              text
-            />
+            <Button label={item.title} icon={item.icon} className="body-16-semibold w-full" text />
           </Link>
         ))}
       </nav>

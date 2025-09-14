@@ -1,19 +1,28 @@
-export function getCookieOptions() {
+type CookieOptions = {
+  httpOnly: boolean;
+  path: string;
+  sameSite: 'lax' | 'none';
+  secure: boolean;
+};
+
+export function getCookieOptions(): CookieOptions {
   const isProd = process.env.NODE_ENV === 'production';
+  const sameSite: 'lax' | 'none' = isProd ? 'none' : 'lax';
   return {
-    httpOnly: true as const,
+    httpOnly: true,
     path: '/',
-    sameSite: (isProd ? 'none' : 'lax') as 'lax' | 'none',
+    sameSite,
     secure: isProd,
   };
 }
 
-export function getReadableCookieOptions() {
+export function getReadableCookieOptions(): CookieOptions {
   const isProd = process.env.NODE_ENV === 'production';
+  const sameSite: 'lax' | 'none' = isProd ? 'none' : 'lax';
   return {
-    httpOnly: false as const,
+    httpOnly: false,
     path: '/',
-    sameSite: (isProd ? 'none' : 'lax') as 'lax' | 'none',
+    sameSite,
     secure: isProd,
   };
 }

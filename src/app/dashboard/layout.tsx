@@ -17,8 +17,9 @@ export default async function DashboardLayout({ children }: ReadonlyChildren) {
 
   const navItems: ReadonlyArray<NavItem> = [
     { title: 'Панель керування', href: '/dashboard', icon: 'pi pi-home' },
-    { title: 'Керування потягами', href: '/dashboard/manage-train', icon: 'pi pi-plus-circle' },
-    { title: 'Шукати потяг', href: '/dashboard/search-train', icon: 'pi pi-search' },
+    { title: 'Станції', href: '/dashboard/stations', icon: 'pi pi-building' },
+    { title: 'Рейси', href: '/dashboard/trips', icon: 'pi pi-send' },
+    { title: 'Пошук відправлень', href: '/dashboard/trips/search', icon: 'pi pi-search' },
   ];
 
   return (

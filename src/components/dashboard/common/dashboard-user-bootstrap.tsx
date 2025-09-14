@@ -9,12 +9,9 @@ type Props = Readonly<{ user: AuthResponse['user'] }>;
 export default function DashboardUserBootstrap({ user }: Props) {
   useEffect(() => {
     try {
-      window.localStorage.setItem(
-        DASHBOARD_USER_INFO_STORAGE_KEY,
-        JSON.stringify(user)
-      );
+      globalThis.localStorage.setItem(DASHBOARD_USER_INFO_STORAGE_KEY, JSON.stringify(user));
     } catch {
-      // ignore
+      console.error('Error saving user info to localStorage');
     }
   }, [user]);
 

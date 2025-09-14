@@ -28,7 +28,7 @@ export default function UserMenu() {
 
       <OverlayPanel ref={overlayRef} className="w-[min(100%,450px)]">
         <div className="px-2 pb-8 text-sm text-neutral-600">
-          <div className='body-16-semibold'>Користувач:</div>
+          <div className="body-16-semibold">Користувач:</div>
           {displayName}
         </div>
         <div className="flex flex-col gap-3">
@@ -45,7 +45,7 @@ export default function UserMenu() {
               type="submit"
               label="Вихід"
               icon="pi pi-sign-out p-tag-danger"
-              severity='danger'
+              severity="danger"
               className="w-full"
             />
           </form>
